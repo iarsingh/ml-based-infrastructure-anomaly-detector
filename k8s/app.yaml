@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-based-infrastructure-anomaly-detector
+  labels:
+    app: ml-based-infrastructure-anomaly-detector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ml-based-infrastructure-anomaly-detector
+  template:
+    metadata:
+      labels:
+        app: ml-based-infrastructure-anomaly-detector
+    spec:
+      containers:
+        - name: api
+          image: ml-based-infrastructure-anomaly-detector:local
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /v1/readyz
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-based-infrastructure-anomaly-detector
+spec:
+  selector:
+    app: ml-based-infrastructure-anomaly-detector
+  ports:
+    - port: 80
+      targetPort: 8080
